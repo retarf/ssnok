@@ -4,8 +4,8 @@ import re
 from mileage import Mileage
 
 
-SOURCE_DB = 'db/obiekt_kolejowy.tdb2'
-#SOURCE_DB = 'db/test_db.db'
+#SOURCE_DB = 'db/obiekt_kolejowy.tdb2'
+SOURCE_DB = 'db/test_db.db'
 TABLE = 'przebiegi'
 RE = r"^[a-zA-Z0-9_]+$"
 
@@ -57,15 +57,15 @@ class Query():
             f"WHERE semafor_poczatkowy = '{start_semaphore}'"
         return self.c.execute(query).fetchall()
 
-    def find_mileage(self, mileage_id=None, start=None, end=None):
+    def search(self, _id=None, start=None, end=None):
         too_many_arguments_error_msg = "Only one argument should be set."
         missing_argument_error_msg = "One of the argumens have to be set."
 
-        if mileage_id:
+        if _id:
             if start is not None or end is not None:
                 raise QueryError(too_many_arguments_error_msg)
             parameter = 'id'
-            value = mileage_id
+            value = _id
         elif start:
             if end is not None:
                 raise QueryError(too_many_arguments_error_msg)
@@ -79,4 +79,12 @@ class Query():
 
         query = f"SELECT * FROM {self.table} " \
             f"WHERE {parameter} = '{value}';"
-        return self.c.execute(query).fetchall()
+
+        result = self.c.execute(query).fetchall()
+        if len(result) > 0:
+            result = [Mileage(data) for data in result]
+
+        return result
+
+    def get_data(self):
+        return [Mileage(data) for data in self.get_all_mileage()]
