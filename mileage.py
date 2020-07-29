@@ -1,4 +1,5 @@
 
+
 class State():
     SX = "SX"
     S1 = "S1"
@@ -36,7 +37,7 @@ class Semaphore():
     def __repr__(self):
         return f"{self.name}: {self.state}"
 
-class Track():
+class Route():
 
     def __init__(self, route, length=4):
         self.length = length
